@@ -44,8 +44,8 @@ var run = setInterval(function () {
       .then(measure)
     })
 
-}, 1000);
+}, 250);
 
 setTimeout(function(){
   clearInterval(run)
-},30*1000)
+},240*1000)
