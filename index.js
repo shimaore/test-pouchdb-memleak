@@ -41,6 +41,8 @@ PouchDB.plugin(plugin)
 var heapUsed = null;
 
 var counter = 0;
+var waiting = 30;
+
 var measure = function() {
   var memory = process.memoryUsage();
   var last_heapUsed = heapUsed;
@@ -55,6 +57,11 @@ var run = setInterval(function () {
 
   global.gc();
 
+  if(waiting > 0) {
+    waiting--;
+    measure();
+    return;
+  }
 
   if(counter < 120) {
     counter++;
