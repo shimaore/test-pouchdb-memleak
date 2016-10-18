@@ -22,4 +22,6 @@ function DummyPouch (opts,callback) {
 
 DummyPouch.valid = function() { return true }
 
-module.exports = DummyPouch
+module.exports = function (PouchDB) {
+  PouchDB.adapter('http', DummyPouch, false)
+}

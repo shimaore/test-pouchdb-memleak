@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --expose-gc index.js"
+    "test": "node --expose-gc index.js http ; node --expose-gc index.js dummy"
   },
   "author": "Stéphane Alnet <stephane@shimaore.net> (https://stephane.shimaore.net/)",
   "license": "Unlicense",

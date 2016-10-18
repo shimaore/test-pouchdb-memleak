@@ -1,13 +1,23 @@
 var PouchDB = require('pouchdb-core')
-var HttpPouch = require('pouchdb-adapter-http')
-var DummyPouch = require('./pouchdb-adapter-dummy')
 
-PouchDB.plugin(function(PouchDB) {
-  /* The regular HTTP adapter */
-  // PouchDB.adapter('http', HttpPouch, false)
-  /* A dummy version for comparison purposes */
-  PouchDB.adapter('http', DummyPouch, false)
-})
+var plugin = null
+
+switch(process.argv[2]) {
+  case 'http':
+    console.log('Using the regular HTTP adapter.')
+    plugin = require('pouchdb-adapter-http')
+    break;
+  case 'dummy':
+    console.log('Using a dummy adapter for comparison purposes.')
+    plugin = require('./pouchdb-adapter-dummy')
+    break;
+  default:
+    console.log('Missing adapter name')
+    process.exit(1);
+    break
+}
+
+PouchDB.plugin(plugin)
 
 var heapUsed = null;
 
