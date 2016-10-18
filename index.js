@@ -1,3 +1,4 @@
+var heapdump = require('heapdump')
 var PouchDB = require('pouchdb-core')
 
 var plugin = null
@@ -21,7 +22,8 @@ var options = {
 */
 var options = {}
 
-switch(process.argv[2]) {
+var plugin_name = process.argv[2]
+switch(plugin_name) {
   case 'http':
     console.log('Using the regular HTTP adapter. Options = ',options)
     plugin = require('pouchdb-adapter-http')
@@ -57,6 +59,10 @@ var run = setInterval(function () {
 
   global.gc();
 
+  if(waiting == 2) {
+    heapdump.writeSnapshot(plugin_name+'-start.heapsnapshot')
+  }
+
   if(waiting > 0) {
     waiting--;
     measure();
@@ -80,6 +86,8 @@ var run = setInterval(function () {
   }
 }, 250);
 
+/* TIME_WAIT will stay for 4 minutes, so wait at least that long */
 setTimeout(function(){
   clearInterval(run)
-},240*1000)
+  heapdump.writeSnapshot(plugin_name+'-end.heapsnapshot')
+},300*1000)
