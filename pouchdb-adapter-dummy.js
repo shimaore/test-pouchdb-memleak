@@ -18,6 +18,7 @@ function DummyPouch (opts,callback) {
       return Promise.resolve({dummy:true})
     }
   }
+  setTimeount(function(){callback(null,api)})
 }
 
 DummyPouch.valid = function() { return true }
