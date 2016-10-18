@@ -1,3 +1,9 @@
+sudo: required
+services: docker
+before_install:
+  - docker pull shimaore/couchdb:1.6.1
+  - docker run -d -p 127.0.0.1:5984:5984 shimaore/couchdb:1.6.1
+  - docker ps -a
 language: node_js
 node_js:
   - "6"
