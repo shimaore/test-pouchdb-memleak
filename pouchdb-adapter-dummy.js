@@ -13,7 +13,7 @@ function DummyPouch (opts,callback) {
   }
   api.info = function(callback) {
     if(callback) {
-      callback({dummy:true})
+      callback(null,{dummy:true})
     } else {
       return Promise.resolve({dummy:true})
     }
