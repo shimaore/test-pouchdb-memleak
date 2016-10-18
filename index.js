@@ -1,6 +1,24 @@
 var PouchDB = require('pouchdb-core')
 
 var plugin = null
+/*
+var options = {
+  ajax: {
+    agentOptions: {
+      keepAlive: true
+    }
+  }
+}
+*/
+/*
+var options = {
+  ajax: {
+    pool: {
+      maxSockets: 1
+    }
+  }
+}
+*/
 var options = {}
 
 switch(process.argv[2]) {
