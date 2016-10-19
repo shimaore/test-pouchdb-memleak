@@ -43,9 +43,12 @@ PouchDB.plugin(plugin)
 var heapUsed = null;
 
 var counter = 0;
-var waiting = 30;
+const max_counter = 1;
+const max_waiting = 30;
+var waiting = max_waiting;
+var overall = 0;
 
-var measure = function() {
+function measure() {
   var memory = process.memoryUsage();
   var last_heapUsed = heapUsed;
   heapUsed = memory.heapUsed;
@@ -55,11 +58,19 @@ var measure = function() {
   }
 }
 
-var run = setInterval(function () {
+var run = setInterval(function onMemleakInterval() {
 
   global.gc();
 
+  overall++;
+
+  if(overall === max_waiting + max_counter + 10) {
+    console.log('heap dump')
+    heapdump.writeSnapshot(plugin_name+'-middle.heapsnapshot')
+  }
+
   if(waiting == 2) {
+    console.log('heap dump')
     heapdump.writeSnapshot(plugin_name+'-start.heapsnapshot')
   }
 
@@ -69,13 +80,13 @@ var run = setInterval(function () {
     return;
   }
 
-  if(counter < 120) {
+  if(counter < max_counter) {
     counter++;
 
     var db = new PouchDB('http://127.0.0.1:5984/foo',options);
     db
       .info()
-      .then(function(){
+      .then(function infoDone(){
         db
         .close()
         .then(measure)
@@ -87,7 +98,8 @@ var run = setInterval(function () {
 }, 250);
 
 /* TIME_WAIT will stay for 4 minutes, so wait at least that long */
-setTimeout(function(){
+setTimeout(function onFinalTimeout(){
   clearInterval(run)
+  console.log('heap dump')
   heapdump.writeSnapshot(plugin_name+'-end.heapsnapshot')
 },300*1000)
