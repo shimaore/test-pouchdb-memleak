@@ -41,9 +41,12 @@ PouchDB.plugin(plugin)
 
 var heapUsed = null;
 
+const per = 4; // new()/close() per second
+const duration = 5*60; // total test duration
+
 var counter = 0;
-const max_counter = 1;
-const max_waiting = 30;
+const max_counter = 20*per;
+const max_waiting = 7*per;
 var waiting = max_waiting;
 var overall = 0;
 
@@ -82,9 +85,9 @@ var run = setInterval(function onMemleakInterval() {
   } else {
     measure()
   }
-}, 250);
+}, 1000/per);
 
 /* TIME_WAIT will stay for 4 minutes, so wait at least that long */
 setTimeout(function onFinalTimeout(){
   clearInterval(run)
-},300*1000)
+},duration*1000)
