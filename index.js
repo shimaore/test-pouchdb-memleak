@@ -1,3 +1,4 @@
+var heapdump = require('heapdump')
 var PouchDB = require('pouchdb-core')
 
 var plugin = null
@@ -50,23 +51,46 @@ const max_waiting = 7*per;
 var waiting = max_waiting;
 var overall = 0;
 
-function measure() {
+var heapUsed = null;
+
+var running = true;
+
+function Measure() {
+  global.gc();
   var memory = process.memoryUsage();
   var last_heapUsed = heapUsed;
   heapUsed = memory.heapUsed;
 
-  if (last_heapUsed !== null) {
-    console.log('current is',heapUsed,', difference is', heapUsed - last_heapUsed, ', counter is',counter);
+  var difference = 0;
+  if(last_heapUsed !== null) {
+    difference = heapUsed - last_heapUsed;
   }
+  var suffix = '_'+difference+'_'+heapUsed+'.heapsnapshot';
+
+  var filename = 'data/at-'+overall+'-';
+  if(waiting > 0) {
+    filename += 'waiting';
+  } else if(counter < max_counter) {
+    filename += 'running-'+counter;
+  } else {
+    filename += 'done';
+  }
+  filename += suffix;
+
+  global.gc();
+  heapdump.writeSnapshot(filename);
+  global.gc();
 }
 
-var run = setInterval(function onMemleakInterval() {
+function onMemleakInterval() {
 
   overall++;
 
+  Measure();
+
   if(waiting > 0) {
     waiting--;
-    measure();
+    setTimeout(onMemleakInterval,1000/per)
     return;
   }
 
@@ -78,16 +102,21 @@ var run = setInterval(function onMemleakInterval() {
       .info()
       .then(function infoDone(){
         db
-        .close()
-        .then(measure)
+        .close(function closeDone(){
+          db = null
+          setTimeout(onMemleakInterval,1000/per)
+        })
       })
-
-  } else {
-    measure()
+    return
   }
-}, 1000/per);
+  if(running) {
+    setTimeout(onMemleakInterval,1000/per)
+  }
+};
 
 /* TIME_WAIT will stay for 4 minutes, so wait at least that long */
 setTimeout(function onFinalTimeout(){
-  clearInterval(run)
+  running = false
 },duration*1000)
+
+setTimeout(onMemleakInterval,1000/per)

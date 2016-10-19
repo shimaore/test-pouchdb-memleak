@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node --inspect --debug-brk index.js dummy",
+    "test": "rm -r data/ && mkdir -p data/ && node --inspect --expose-gc index.js dummy",
+    "test+inspect": "node --inspect --debug-brk index.js dummy",
     "test+full": "DEBUG='*' node --expose-gc --trace_gc --trace_deopt --trace_opt --trace --trace_gc_nvp --trace_gc_verbose --code_comments --log_gc --heap_profiler_trace_objects index.js dummy 2>&1 >trace.log"
   },
   "author": "Stéphane Alnet <stephane@shimaore.net> (https://stephane.shimaore.net/)",
   "license": "Unlicense",
   "dependencies": {
+    "heapdump": "^0.3.7",
     "pouchdb-adapter-http": "^6.0.7",
     "pouchdb-core": "^6.0.7"
   }
