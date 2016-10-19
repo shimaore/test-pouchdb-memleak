@@ -1,4 +1,3 @@
-var heapdump = require('heapdump')
 var PouchDB = require('pouchdb-core')
 
 var plugin = null
@@ -60,19 +59,7 @@ function measure() {
 
 var run = setInterval(function onMemleakInterval() {
 
-  global.gc();
-
   overall++;
-
-  if(overall === max_waiting + max_counter + 10) {
-    console.log('heap dump')
-    heapdump.writeSnapshot(plugin_name+'-middle.heapsnapshot')
-  }
-
-  if(waiting == 2) {
-    console.log('heap dump')
-    heapdump.writeSnapshot(plugin_name+'-start.heapsnapshot')
-  }
 
   if(waiting > 0) {
     waiting--;
@@ -100,6 +87,4 @@ var run = setInterval(function onMemleakInterval() {
 /* TIME_WAIT will stay for 4 minutes, so wait at least that long */
 setTimeout(function onFinalTimeout(){
   clearInterval(run)
-  console.log('heap dump')
-  heapdump.writeSnapshot(plugin_name+'-end.heapsnapshot')
 },300*1000)
