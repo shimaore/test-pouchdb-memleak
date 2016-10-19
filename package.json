@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "DEBUG='*' node --expose-gc --trace_gc index.js http",
+    "test": "node --inspect --debug-brk index.js dummy",
     "test+full": "DEBUG='*' node --expose-gc --trace_gc --trace_deopt --trace_opt --trace --trace_gc_nvp --trace_gc_verbose --code_comments --log_gc --heap_profiler_trace_objects index.js dummy 2>&1 >trace.log"
   },
   "author": "Stéphane Alnet <stephane@shimaore.net> (https://stephane.shimaore.net/)",
